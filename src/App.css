@@ -1,0 +1,64 @@
+
+body{
+  background-color: #252829;
+  color: white;
+}
+
+.pane{
+  width: 32vw;
+  height: 100vh;
+  float:left;
+
+}
+
+.canvas{
+  width: 1500px;
+  height: 1000px;
+}
+
+.statsCard{
+  padding: 90pt 30pt 30pt 30pt;
+  font-size: 10vw;
+  display: inline-block;
+  height: 100vh;
+  width:33vw;
+  text-align: center;
+
+}
+
+
+.cardText{
+  position: absolute;
+  bottom: 10px;
+  margin-bottom:60pt;
+  width: 27.5vw;
+}
+
+.data{
+  font-size: 1.2em;
+  display: inline-block;
+  text-align: center;
+}
+
+.unit{
+  font-size: 0.5em;
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+.desc{
+  font-size: 0.1em;
+  display: block;
+}
+
+.icon{
+  font-size: 170px;
+  margin-bottom: 35px;
+}
+
+@media screen and (max-width: 1200px) {
+  .icon {
+     font-size: 100%;
+  }
+}
