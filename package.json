@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "club-statistics",
   "version": "0.1.0",
   "engines": {
     "node": "12.x"
@@ -17,7 +17,6 @@
     "node-fetch": "^2.6.1",
     "react": "^17.0.2",
     "react-bootstrap": "^1.5.2",
-    "react-card-flip": "^1.1.1",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
