@@ -23,6 +23,35 @@ function App() {
   const [dataTY, setDataTY] = React.useState({})
 
   React.useEffect(()=>{
+    const fetchData = () => {
+      let baseUrl = ""
+  
+      // Figure out if in dev or prod and set base url to api accordingly
+      if (window.location.href.includes("localhost:3000")) {
+        baseUrl = "http://localhost:8889/"
+      }
+  
+      console.log("Fetching");
+      fetch(baseUrl + "stats").then(x=>x.json()).then(
+        (res)=>{
+          console.log("Fetching finished")
+  
+          if (bootTime && res.bootTime) {
+            if (bootTime < res.bootTime){
+              console.log("Reloading!");
+              window.location.reload();
+            }
+          }
+          console.log(res)
+          setBootTime(res.bootTime)
+          setDataLY(res.flightCumSum.filter(f => ('2021-12-31' < f.date && f.date < '2023-01-01')));
+          setDataTY(res.flightCumSum.filter(f => ('2022-12-31' < f.date && f.date < '2024-01-01')));
+  
+        }
+      )
+      .catch(console.error)
+    }
+    
     fetchData();
     setInterval(()=>{
       var d = new Date();
@@ -79,34 +108,7 @@ function App() {
     return flightDay;
   }
 
-  const fetchData = () => {
-    let baseUrl = ""
-
-    // Figure out if in dev or prod and set base url to api accordingly
-    if (window.location.href.includes("localhost:3000")) {
-      baseUrl = "http://localhost:8889/"
-    }
-
-    console.log("Fetching");
-    fetch(baseUrl + "stats").then(x=>x.json()).then(
-      (res)=>{
-        console.log("Fetching finished")
-
-        if (bootTime && res.bootTime) {
-          if (bootTime < res.bootTime){
-            console.log("Reloading!");
-            window.location.reload();
-          }
-        }
-        console.log(res)
-        setBootTime(res.bootTime)
-        setDataLY(res.flightCumSum.filter(f => ('2021-12-31' < f.date && f.date < '2023-01-01')));
-        setDataTY(res.flightCumSum.filter(f => ('2022-12-31' < f.date && f.date < '2024-01-01')));
-
-      }
-    )
-    .catch(console.error)
-  }
+  
 
   return (
     < >
