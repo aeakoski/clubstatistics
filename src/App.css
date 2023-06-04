@@ -1,19 +1,54 @@
 
 body{
-  background-color: #252829;
-  color: white;
+  background-color: #252829 !important; 
+  color: #ffff !important; 
+  margin-left: 5vw;
+  margin-right: 5vw;
+}
+
+.mainContainer{
+  background-color: #202324 !important; 
 }
 
 .pane{
   width: 32vw;
-  height: 100vh;
   float:left;
 
 }
 
-.canvas{
-  width: 1500px;
-  height: 1000px;
+.row{
+  margin: 10px 0px 10px 0px;
+  padding: 20px 00px 20px 00px;
+
+}
+
+.numberStatistic {
+  text-align: center;
+  background-color: #151515;
+  display: inline-block;
+  border: 1px solid #CCCCCC;
+  border-radius: 4px;
+  padding: 10px;
+  width: 100px; /* Adjust the width as per your requirement */
+  height:120px;
+  margin: 0px 10px 0px 10px;
+}
+
+.numberStatisticNumber {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.numberStatisticDescription {
+  font-size: 12px;
+  margin: 0;
+}
+
+.yearlyChart{
+  width: 600px;
+  height:500px;
+  
 }
 
 .statsCard{

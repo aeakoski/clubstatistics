@@ -11,7 +11,10 @@ npm install
 
 
 -- In powershell:
+$env:MYWEBLOG_SYSTEM_USER = "xxxxxxxxxxxx"
+$env:MYWEBLOG_SYSTEM_PASSWORD = "xxxxxxxxxxxx"
 $env:MYWEBLOG_TOKEN = "xxxxxxxxxxxx"
+$env:NODE_OPTIONS = "--openssl-legacy-provider"
 ```
 
 # Build
