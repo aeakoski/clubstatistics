@@ -51,7 +51,7 @@ function App() {
       )
       .catch(console.error)
     }
-    
+
     fetchData();
     setInterval(()=>{
       var d = new Date();
@@ -114,7 +114,7 @@ function App() {
     < >
     <div className="mainContainer container-fluid">
       <div className="row">
-        <div className="col col-md-4">
+        <div className="col col-xl-4">
           <h2>Årligt Flygtidsuttag Totalt</h2>
           <ResponsiveContainer width={"100%"} height={500} min-width={300}>
             <LineChart
@@ -143,7 +143,7 @@ function App() {
                 />
               </YAxis> 
               <Tooltip />
-              <Legend iconType="circle" wrapperStyle={{top: 10, left: 10}}/>
+              <Legend iconType="circle" wrapperStyle={{top: 10, left: 60}}/>
               <Line name={"Totalt flygtidsuttag " + (new Date().getFullYear()-1)} data={dataLY} xAxisId="0" type="monotone" dataKey="flightHoursAllCumSum" stroke="rgb(50, 70, 90)" dot={false} strokeWidth={3}/>
               <Line name={"Totalt flygtidsuttag " + (new Date().getFullYear())} data={dataTY} xAxisId="1" type="monotone" dataKey="flightHoursAllCumSum" stroke="rgb(44, 158, 245)" dot={false} strokeWidth={3}/>
             </LineChart>
@@ -164,7 +164,7 @@ function App() {
           </div>
         </div>
 
-        <div className="col col-md-4">
+        <div className="col col-xl-4">
           <h2>Årligt Flygtidsuttag Motorflyg</h2>
           <ResponsiveContainer width={"100%"} height={500} min-width={300}>
             <LineChart
@@ -192,7 +192,7 @@ function App() {
                 />
               </YAxis> 
               <Tooltip />
-              <Legend iconType="circle" wrapperStyle={{top: 10, left: 10}}/>
+              <Legend iconType="circle" wrapperStyle={{top: 10, left: 60}}/>
               <Line name={"Motorflygtidsuttag " + (new Date().getFullYear()-1)} data={dataLY} xAxisId="0" type="monotone" dataKey="flightHoursMotorCumSum" stroke="#4b4d0e" dot={false} strokeWidth={3}/>
               <Line name={"Motorflygtidsuttag " + (new Date().getFullYear())} data={dataTY} xAxisId="1" type="monotone" dataKey="flightHoursMotorCumSum" stroke="#f1f52c" dot={false} strokeWidth={3}/>
             </LineChart>
@@ -213,7 +213,7 @@ function App() {
           </div>
         </div>
 
-        <div className="col col-md-4">
+        <div className="col col-xl-4">
           <h2>Årligt Flygtidsuttag Segelflyg</h2>
           <ResponsiveContainer width={"100%"} height={500} min-width={300}>
           <LineChart
@@ -241,7 +241,7 @@ function App() {
               />
             </YAxis> 
             <Tooltip />
-            <Legend iconType="circle" wrapperStyle={{top: 10, left: 10}}/>
+            <Legend iconType="circle" wrapperStyle={{top: 10, left: 60}}/>
             <Line name={"Segelflygtidsuttag " + (new Date().getFullYear()-1)} data={dataLY} xAxisId="0" type="monotone" dataKey="flightHoursGliderCumSum" stroke="#0e4d16" dot={false} strokeWidth={3}/>
             <Line name={"Segelflygtidsuttag " + (new Date().getFullYear())} data={dataTY} xAxisId="1" type="monotone" dataKey="flightHoursGliderCumSum" stroke="#22ba35" dot={false} strokeWidth={3}/>
           </LineChart>
