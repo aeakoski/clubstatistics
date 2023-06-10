@@ -37,8 +37,6 @@ const getData = () => {
     urlencoded.append("from_date", lastYear + "-01-01")
     urlencoded.append("to_date", dd + '-' + mm + '-' + yyyy);
 
-    //console.log(urlencoded)
-
     var requestOptions = {
         method: 'POST',
         headers: myHeaders,
@@ -77,17 +75,17 @@ const updateBookingData = async () => {
       "gliderFutureBookedHours": 153,
     }...
   ]
-  */  
+  */
   1+1;
 }
 
 const updateFlightData = async () => {
     const data = await getData()
 
-    // console.log(data.result.FlightLog[0]);
+    //console.log(data.result.FlightLog[0]);
     // Init cumsum list with empty buckets
-    
-    for (let d = new Date(lastYear, 0, 1); d <= new Date(yyyy, 11, 31); d.setDate(d.getDate() + 1)) {  
+
+    for (let d = new Date(lastYear, 0, 1); d <= new Date(yyyy, 11, 31); d.setDate(d.getDate() + 1)) {
       flightDataByDate[d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0')] = {
         "date": d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0'),
         "flightHoursAllCumSum": null,
@@ -107,7 +105,7 @@ const updateFlightData = async () => {
     // Calculate cumsum and reset on every new year
     for (let d = new Date(lastYear, 0, 2); d <= today; d.setDate(d.getDate() + 1)) {
       let thisDate = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0');
-  
+
       // Reset cumsum in the begining of the year
       if(d.getMonth() == 0 && d.getDate() == 1){
         flightDataByDate[thisDate]["flightHoursAllCumSum"] = flightDataByDate[thisDate]["flights"].reduce(
@@ -117,7 +115,7 @@ const updateFlightData = async () => {
         flightDataByDate[thisDate]["flightHoursMotorCumSum"] = flightDataByDate[thisDate]["flights"].filter((flight) => OUR_MOTORPLANES.includes(flight.regnr)).reduce(
           (accumulator, currentFlight)=> accumulator + parseFloat(currentFlight.airborne_total), 0
         );
-        
+
         flightDataByDate[thisDate]["flightHoursGliderCumSum"] = flightDataByDate[thisDate]["flights"].filter((flight) => OUR_GLIDERS.includes(flight.regnr)).reduce(
           (accumulator, currentFlight)=> accumulator + parseFloat(currentFlight.airborne_total), 0
         );
@@ -145,7 +143,7 @@ const updateFlightData = async () => {
     data.result.FlightLog.forEach((x) => {pilots.set(x.fullname, 1)})
     totNoPilots = [...pilots.keys()].length
     */
-  
+
     // Anonomyse by removing the individual flights
     let tmp_cumSumFlightList = Object.values(flightDataByDate);
     for (let index = 0; index < tmp_cumSumFlightList.length; index++) {
@@ -154,9 +152,6 @@ const updateFlightData = async () => {
 
     // Return
     cumSumFlightList = tmp_cumSumFlightList;
-    
-    // Debug
-    console.log(cumSumFlightList[cumSumFlightList.length-1]);
 }
 
 var airplanes = {}
@@ -169,7 +164,9 @@ updateFlightData()
 updateBookingData()
 setInterval(updateFlightData, 15*60*1000); // 5th min
 
-
+console.log(process.env.MYWEBLOG_SYSTEM_USER);
+console.log(process.env.MYWEBLOG_SYSTEM_PASSWORD);
+console.log(process.env.MYWEBLOG_TOKEN);
 
 app.get('/stats', async (req, res) => {
 
