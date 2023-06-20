@@ -169,8 +169,8 @@ function App() {
           ylabel="Ackumulerad segelflygtid över året"
           shadowLegend={"Segelflygtidsuttag " + (new Date().getFullYear()-1)}
           mainLegend={"Segelflygtidsuttag " + (new Date().getFullYear())}
-          mainColor= "#0e4d16"
-          shadowColor="#22ba35"
+          mainColor= "#22ba35"
+          shadowColor="#0e4d16"
           dataLY={dataLY}
           dataTY={dataTY}
           xDataKey="date"
