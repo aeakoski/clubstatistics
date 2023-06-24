@@ -6,7 +6,7 @@ import './App.css';
 
 import ShadowGraph from './components/shadowGraph/graph.jsx'
 import Number from './components/number/number.jsx'
-
+import Planes from './components/planes/planes.jsx'
 /*
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {faClock } from '@fortawesome/free-solid-svg-icons'
@@ -24,8 +24,12 @@ function App() {
   const [bootTime, setBootTime] = React.useState({})
   const [dataLY, setDataLY] = React.useState({})
   const [dataTY, setDataTY] = React.useState({})
+  const [motorPlanes, setMotorPlanes] = React.useState({})
+  const [sailPlanes, setSailPlanes] = React.useState({})
 
   React.useEffect(()=>{
+    setMotorPlanes([]);
+    setSailPlanes([]);
     const fetchData = () => {
       let baseUrl = ""
 
@@ -45,11 +49,12 @@ function App() {
               window.location.reload();
             }
           }
-          console.log(res)
+          //console.log(res)
           setBootTime(res.bootTime)
           setDataLY(res.flightCumSum.filter(f => ('2021-12-31' < f.date && f.date < '2023-01-01')));
           setDataTY(res.flightCumSum.filter(f => ('2022-12-31' < f.date && f.date < '2024-01-01')));
-
+          setMotorPlanes(res.motorPlanes);
+          setSailPlanes(res.sailPlanes);
         }
       )
       .catch(console.error)
@@ -184,7 +189,24 @@ function App() {
           </div>
         </div>
       </div>
+      <div className="row">
+        <h2>Flygtid per motorflygplan</h2>
+      </div>
+      <Planes
+        planes={motorPlanes}
+        dataLY={dataLY}
+        dataTY={dataTY}
+      />
+      <div className="row">
+        <h2>Flygtid per segelflygplan</h2>
+      </div>
+      <Planes
+        planes={sailPlanes}
+        dataLY={dataLY}
+        dataTY={dataTY}
+      />
     </div>
+    
     < />
   );
 }
