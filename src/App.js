@@ -123,13 +123,13 @@ function App() {
     < >
     <div className="mainContainer container-fluid">
       <div className="row">
-        <div className="col col-xl-4">
+        <div className="col">
           <ShadowGraph
-            header= "Årligt Flygtidsuttag Totalt"
+            header= "Årligt Flygtidsuttag: Alla klubbflygplan summerat"
             xlabel="Datum"
-            ylabel="Ackumulerad flygtid över året"
-            shadowLegend={"Totalt flygtidsuttag " + (new Date().getFullYear()-1)}
-            mainLegend={"Totalt flygtidsuttag " + (new Date().getFullYear())}
+            ylabel="Ackumulerade årliga flygtimmar"
+            shadowLegend={"Flygtimmar " + (new Date().getFullYear()-1)}
+            mainLegend={"Flygtimmar " + (new Date().getFullYear())}
             mainColor= "rgb(44, 158, 245)"
             shadowColor="rgb(50, 70, 90)"
             dataLY={dataLY}
@@ -144,14 +144,15 @@ function App() {
           <Number number={parseInt(getTodaysData().flightHoursAllCumSum) - parseInt(getLastYearsData().flightHoursAllCumSum)} description="Skillnad mot fg år"/>
           </div>
         </div>
-
-        <div className="col col-xl-4">
+      </div>
+      <div className="row">
+        <div className="col">
         <ShadowGraph
           header= "Årligt Flygtidsuttag Motorflyg"
           xlabel="Datum"
-          ylabel="Ackumulerad motorflygtid över året"
-          shadowLegend={"Motorflygtidsuttag " + (new Date().getFullYear()-1)}
-          mainLegend={"Motorflygtidsuttag " + (new Date().getFullYear())}
+          ylabel="Ackumulerade årliga motorflygtimmar"
+          shadowLegend={"Motorflygtimmar " + (new Date().getFullYear()-1)}
+          mainLegend={"Motorflygtimmar " + (new Date().getFullYear())}
           mainColor= "#f1f52c"
           shadowColor="#4b4d0e"
           dataLY={dataLY}
@@ -166,14 +167,15 @@ function App() {
           <Number number={parseInt(getTodaysData().flightHoursMotorCumSum) - parseInt(getLastYearsData().flightHoursMotorCumSum)} description="Skillnad mot fg år"/>
           </div>
         </div>
-
-        <div className="col col-xl-4">
+      </div>
+      <div className="row">
+        <div className="col">
         <ShadowGraph
           header="Årligt Flygtidsuttag Segelflyg"
           xlabel="Datum"
-          ylabel="Ackumulerad segelflygtid över året"
-          shadowLegend={"Segelflygtidsuttag " + (new Date().getFullYear()-1)}
-          mainLegend={"Segelflygtidsuttag " + (new Date().getFullYear())}
+          ylabel="Ackumulerade årliga segelflygtimmar"
+          shadowLegend={"Segelflygtimmar " + (new Date().getFullYear()-1)}
+          mainLegend={"Segelflygtimmar " + (new Date().getFullYear())}
           mainColor= "#22ba35"
           shadowColor="#0e4d16"
           dataLY={dataLY}
