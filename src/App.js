@@ -30,6 +30,9 @@ function App() {
   React.useEffect(()=>{
     setMotorPlanes([]);
     setSailPlanes([]);
+    
+    const dayOfYear = date => Math.floor((date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+
     const fetchData = () => {
       let baseUrl = ""
 
@@ -55,6 +58,13 @@ function App() {
           setDataTY(res.flightCumSum.filter(f => ('2022-12-31' < f.date && f.date < '2024-01-01')));
           setMotorPlanes(res.motorPlanes);
           setSailPlanes(res.sailPlanes);
+
+          const lastYearData = dataLY.map((point) => [dayOfYear(new Date(point.date)), point.flightHoursAllCumSum]); // Convert data to array of [x, y] pairs
+          const fittedCurve = math.polynomialFit(lastYearData, 3); // Use a polynomial of degree 3 for fitting
+          const extrapolationRange = math.range(dayOfYear(new Date(dayOfYear(dataTY[dataTY.length-1]))), 366, 1).toArray();
+          const _extrapolatedData = extrapolationRange.map((x) => [x, math.evaluate(fittedCurve, { x })]);
+          _extrapolatedData.map((item) => dataTY[(new Date().setMonth(0, item[0])).toISOString().split('T')[0]].prediction = item[0]);
+
         }
       )
       .catch(console.error)
@@ -124,10 +134,47 @@ function App() {
     <div className="mainContainer container-fluid">
       <div className="row">
         <div className="col">
+        <div>
+          <h2>{"Årligt Flygtidsuttag: Alla klubbflygplan summerat"}</h2>
+          <ResponsiveContainer width={"100%"} height={500} min-width={300}>
+            <LineChart
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 20,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" fill="#151515"/>
+              <XAxis 
+                xAxisId="1" 
+                angle={-45} 
+                textAnchor="end" 
+                dataKey="date"
+                tickCount={12}
+                tickFormatter={(tick) => {
+                  let d = new Date(tick).toLocaleString('default', { month: 'short' })
+                  return d.charAt(0).toUpperCase() + d.slice(1)
+                  }}>
+              </XAxis>
+              <XAxis xAxisId="0" dataKey="date" tick={false} />
+              <XAxis xAxisId="2" dataKey="date" tick={false} />
+              <YAxis
+                tickFormatter={(tick) => tick + " h"}>
+              </YAxis>
+              <Tooltip itemStyle="animation: 'none'" />
+              <Legend layout="vertical" iconType="circle"  wrapperStyle={{top: 10, left: 90}}/>
+              <Line name={"Flygtimmar " + (new Date().getFullYear()-1)} data={dataLY} xAxisId="0" type="monotone" dataKey="flightHoursAllCumSum" stroke="rgb(50, 70, 90)" dot={false} strokeWidth={3}/>
+              <Line name={"Flygtimmar " + (new Date().getFullYear())} data={dataTY} xAxisId="1" type="monotone" dataKey="flightHoursAllCumSum" stroke="rgb(44, 158, 245)" dot={false} strokeWidth={3}/>
+              <Line name={"Prognos " + (new Date().getFullYear())} data={dataTY} xAxisId="2" type="monotone" dataKey="prediction" stroke="rgb(44, 158, 245)" dot={false} strokeWidth={1}/>
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
           <ShadowGraph
             header= "Årligt Flygtidsuttag: Alla klubbflygplan summerat"
             xlabel="Datum"
-            ylabel="Ackumulerade årliga flygtimmar"
+            ylabel="Ackumulerade årliga motorflygtimmar"
             shadowLegend={"Flygtimmar " + (new Date().getFullYear()-1)}
             mainLegend={"Flygtimmar " + (new Date().getFullYear())}
             mainColor= "rgb(44, 158, 245)"
