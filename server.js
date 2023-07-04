@@ -265,7 +265,6 @@ app.get('/stats', async (req, res) => {
         "bootTime": bootTime,
         "sailPlanes": OUR_GLIDERS,
         "motorPlanes": OUR_MOTORPLANES,
-        "": LYPredSmooth
       }
     );
 });
