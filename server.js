@@ -264,7 +264,7 @@ app.get('/stats', async (req, res) => {
         "prediction": LYPredSmooth,
         "bootTime": bootTime,
         "sailPlanes": OUR_GLIDERS,
-        "motorPlanes": OUR_MOTORPLANES,
+        "motorPlanes": OUR_MOTORPLANES
       }
     );
 });
