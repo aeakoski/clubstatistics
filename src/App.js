@@ -85,7 +85,7 @@ function App() {
     < >
     <div className="mainContainer container-fluid">
       <div className="row mainDescription">
-        <h1>Statestik för olika klubbsegment</h1>
+        <h1>Statestik för olika klubbsegment i Östra Sörmlands Flygklubb</h1>
         <p>Se ackumulerad flygtid för olika klubbsegment. Utöver historisk data visar den även en prognos på kommande flygtidsuttag om föregående års trender följs.</p>
         <p>Syftet är att kunna se om något segment hamnar efter som möjliggör proaktiva beslut istället för att vid årets slut få överraskningar.</p>
         <p>Det går även att använda prognosen som en fingervisning till när flygplans nästa periodiska service kan väntas behöva göras.</p>
