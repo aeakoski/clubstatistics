@@ -248,7 +248,7 @@ var cumSumBookingtList = []
 updateFlightData()
 console.log("Done updating initial flight data")
 updateBookingData()
-setInterval(updateFlightData, 15*60*1000); // 5th min
+setInterval(updateFlightData, 180*60*1000); // 3h:s
 
 console.log(process.env.MYWEBLOG_SYSTEM_USER);
 //console.log(process.env.MYWEBLOG_SYSTEM_PASSWORD);
