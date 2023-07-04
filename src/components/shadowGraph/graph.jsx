@@ -63,9 +63,7 @@ const ShadowGraph = function({
             tickFormatter={(tick) => {
               let d = new Date(tick).toLocaleString('default', { month: 'short' })
               return d.charAt(0).toUpperCase() + d.slice(1)
-              }}>
-            
-          
+              }}>          
           </XAxis>
           <XAxis xAxisId="0" dataKey="date" tick={false} />
 

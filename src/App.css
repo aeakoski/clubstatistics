@@ -19,6 +19,8 @@ body{
 
 .mainContainer{
   background-color: #202324 !important; 
+  max-width: 700px;
+  min-width: 500px;
 }
 
 .pane{
@@ -101,6 +103,58 @@ body{
 .icon{
   font-size: 170px;
   margin-bottom: 35px;
+}
+
+.mainDescription {
+  color: #ffffff;
+  margin: 60px;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  text-align: center;
+  position: relative;
+  display: inline-block;
+}
+
+h1:before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 50%;
+  transition: top 0.5s ease-in-out;
+}
+
+h1:after {
+  content: attr(data-text);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 50%;
+  transition: bottom 0.5s ease-in-out;
+}
+
+h1:hover:before {
+  top: -50%;
+}
+
+h1:hover:after {
+  bottom: -50%;
+}
+
+p {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 10px;
 }
 
 @media screen and (max-width: 1200px) {

@@ -15,10 +15,14 @@ const dd = String(today.getDate()).padStart(2, '0');
 const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
 const yyyy = today.getFullYear();
 const lastYear = yyyy-1
-
+let LYPredSmooth;
 const OUR_GLIDERS = ['SE-TZY', 'SE-URG', 'SE-TVL', 'SE-UUY', 'SE-UFA', 'SE-SKZ']
 const OUR_MOTORPLANES = ['SE-MLT', 'SE-MMB', 'SE-MMC', 'SE-KBT', 'SE-CKB',]
 const OUR_AIRPLANES = OUR_MOTORPLANES.concat(OUR_GLIDERS)
+const movingAverageDays = 15
+
+
+const range = n => Array.from(Array(n).keys())
 
 const getData = () => {
 
@@ -154,9 +158,85 @@ const updateFlightData = async () => {
       tmp_cumSumFlightList[index].flights = [];
     }
 
-    // Return
+    // Return value
     cumSumFlightList = tmp_cumSumFlightList;
+ 
+    // Predictions
+    let LY = tmp_cumSumFlightList.filter(f => ('2021-12-31' < f.date && f.date < '2023-01-01'))
+    let TY = tmp_cumSumFlightList.filter(f => ('2022-12-31' < f.date && f.date < '2024-01-01'))
     
+    let _largestDateTYLY = new Date()
+    _largestDateTYLY.setFullYear(_largestDateTYLY.getFullYear() - 1 );
+    let largestDateTYLY = _largestDateTYLY.toISOString().split('T')[0];
+
+    let _largestDateTY = new Date()
+    _largestDateTY.setDate(_largestDateTY.getDate() - 1);
+    let largestDateTY = _largestDateTY.toISOString().split('T')[0];
+    let diff = {
+      "all": TY.filter(f => largestDateTY == f.date)[0].flightHoursAllCumSum 
+              - range(movingAverageDays).reduce((accumulator, currentValue)=> {return LY[LY.map(f => f.date).indexOf(largestDateTYLY) - currentValue].flightHoursAllCumSum + accumulator}, 0) / movingAverageDays || 0, 
+      "motor": TY.filter(f => largestDateTY == f.date)[0].flightHoursMotorCumSum 
+              - range(movingAverageDays).reduce((accumulator, currentValue)=> {return LY[LY.map(f => f.date).indexOf(largestDateTYLY) - currentValue].flightHoursMotorCumSum + accumulator}, 0) / movingAverageDays || 0, 
+      "glider": TY.filter(f => largestDateTY == f.date)[0].flightHoursGliderCumSum 
+              - range(movingAverageDays).reduce((accumulator, currentValue)=> {return LY[LY.map(f => f.date).indexOf(largestDateTYLY) - currentValue].flightHoursGliderCumSum + accumulator}, 0) / movingAverageDays || 0, 
+    }
+    
+    OUR_AIRPLANES.map((regnr)=>{
+      diff[regnr] = TY.filter(f => largestDateTY == f.date)[0].cumSumByPlane[regnr]
+        - range(movingAverageDays).reduce((accumulator, currentValue)=> {return LY[LY.map(f => f.date).indexOf(largestDateTYLY) - currentValue].cumSumByPlane[regnr] + accumulator}, 0) / movingAverageDays || 0
+    })
+    
+    LYPredSmooth = LY.map((item, index)=>{
+      let _tmpDate = new Date(item.date)
+      _tmpDate.setFullYear(new Date().getFullYear());
+      let predictionDateTY = _tmpDate.toISOString().split('T')[0];
+      if (item.date < largestDateTYLY){
+        let a = {
+          "date": predictionDateTY,
+          "predictionFlightHoursAllCumSum": null,
+          "predictionFlightHoursMotorCumSum": null,
+          "predictionFlightHoursGliderCumSum": null
+        }
+        return a
+      }      
+
+      if (index < movingAverageDays) {
+        let a = {
+          "date": predictionDateTY,
+          "predictionFlightHoursAllCumSum": item.flightHoursAllCumSum,
+          "predictionFlightHoursMotorCumSum": item.flightHoursMotorCumSum,
+          "predictionFlightHoursGliderCumSum": item.flightHoursGliderCumSum
+        }
+        return a
+      } else {
+        let a = {
+          "date": predictionDateTY, 
+          "predictionFlightHoursAllCumSum": (
+            Math.round(
+              range(movingAverageDays).reduce((accumulator, currentValue)=> {return LY[index - currentValue].flightHoursAllCumSum + accumulator}, 0)
+              /movingAverageDays) + diff.all
+              ),
+          "predictionFlightHoursMotorCumSum": (
+            Math.round(
+              range(movingAverageDays).reduce((accumulator, currentValue)=> {return LY[index - currentValue].flightHoursMotorCumSum + accumulator}, 0)
+              /movingAverageDays) + diff.motor
+              ),
+          "predictionFlightHoursGliderCumSum": (
+            Math.round(
+              range(movingAverageDays).reduce((accumulator, currentValue)=> {return LY[index - currentValue].flightHoursGliderCumSum + accumulator}, 0)
+              /movingAverageDays) + diff.glider
+              )
+          }
+          OUR_AIRPLANES.map((regnr)=>{
+            a[regnr] = (
+              Math.round(
+                range(movingAverageDays).reduce((accumulator, currentValue)=> {return LY[index - currentValue].cumSumByPlane[regnr] + accumulator}, 0)
+                /movingAverageDays) + diff[regnr]
+                )
+          })
+          return a
+      }
+    })
 }
 
 var airplanes = {}
@@ -166,6 +246,7 @@ var cumSumFlightList = []
 var cumSumBookingtList = []
 
 updateFlightData()
+console.log("Done updating initial flight data")
 updateBookingData()
 setInterval(updateFlightData, 15*60*1000); // 5th min
 
@@ -174,15 +255,17 @@ console.log(process.env.MYWEBLOG_SYSTEM_USER);
 //console.log(process.env.MYWEBLOG_TOKEN);
 
 app.get('/stats', async (req, res) => {
-    console.log(cumSumFlightList.slice(0, 7))
+    //console.log(cumSumFlightList.slice(0, 7))
     res.set("Access-Control-Allow-Origin", "*")
     res.send(
       {
         "futureBookingCumSum" : cumSumBookingtList,
         "flightCumSum" : cumSumFlightList,
+        "prediction": LYPredSmooth,
         "bootTime": bootTime,
         "sailPlanes": OUR_GLIDERS,
-        "motorPlanes": OUR_MOTORPLANES
+        "motorPlanes": OUR_MOTORPLANES,
+        "": LYPredSmooth
       }
     );
 });
