@@ -27,10 +27,12 @@ function App() {
   const [dataTY, setDataTY] = React.useState({})
   const [dataTYPrediction, setDataTYPrediction] = React.useState({})
   const [motorPlanes, setMotorPlanes] = React.useState({})
+  const [towPlanes, setTowPlanes] = React.useState({})
   const [sailPlanes, setSailPlanes] = React.useState({})
 
   React.useEffect(()=>{
     setMotorPlanes([]);
+    setTowPlanes([]);
     setSailPlanes([]);
     setDataTYPrediction([])
 
@@ -60,6 +62,7 @@ function App() {
           let TY = res.flightCumSum.filter(f => ('2022-12-31' < f.date && f.date < '2024-01-01'))
           
           setMotorPlanes(res.motorPlanes);
+          setTowPlanes(res.towPlanes);
           setSailPlanes(res.sailPlanes);
           
           setDataLY(LY);
@@ -151,6 +154,26 @@ function App() {
         </div>
       </div>
       <div className="row">
+        <div className="col">
+        <ShadowPredictionGraph
+            header="Årligt Flygtidsuttag Bogsering"
+            xlabel="Datum"
+            ylabel="Ackumulerade årliga bogsertimmar"
+            shadowLegend={"Bogsertimmar " + (new Date().getFullYear()-1)}
+            mainLegend={"Bogsertimmar " + (new Date().getFullYear())}
+            mainColor= "#a83297"
+            shadowColor="#591a50"
+            dataLY={dataLY}
+            dataTY={dataTY}
+            dataPrediction={dataTYPrediction}
+            dataPredictionKey = "predictionFlightHoursTowCumSum"
+            xDataKey="date"
+            yShadowDataKey="flightHoursTowCumSum"
+            yMainDataKey="flightHoursTowCumSum"
+          />
+        </div>
+      </div>
+      <div className="row">
         <h2>Flygtid per motorflygplan</h2>
       </div>
       <div className="col">
@@ -168,6 +191,17 @@ function App() {
       <div className="col">
         <Planes
           planes={sailPlanes}
+          dataLY={dataLY}
+          dataTY={dataTY}
+          dataPrediction={dataTYPrediction}
+        />
+      </div>
+      <div className="row">
+        <h2>Flygtid per bogserflygplan</h2>
+      </div>
+      <div className="col">
+        <Planes
+          planes={towPlanes}
           dataLY={dataLY}
           dataTY={dataTY}
           dataPrediction={dataTYPrediction}
