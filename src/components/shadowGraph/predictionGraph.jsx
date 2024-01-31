@@ -62,9 +62,6 @@ const ShadowPredictionGraph = function({
         "flights": []
       }
     }
-    console.log("getThisYearsData");
-    console.log(dataTY);
-    console.log(flightDay);
     return flightDay;
   }
 
@@ -89,9 +86,6 @@ const ShadowPredictionGraph = function({
         "flights": []
       }
     }
-    console.log("getLastYearsData");
-    console.log(dataTY);
-    console.log(flightDay);
     return flightDay;
   }
 
