@@ -37,7 +37,24 @@ const ShadowPredictionGraph = function({
             <p>{payload[1].payload.date} - {Math.round(payload[1].value)} timmar</p>
           </div>
         );
-    } else {
+    } else if (active && payload && payload.length == 3) {
+      return (
+          <div className="custom-tooltip">
+            <p>{payload[0].payload.date} - {Math.round(payload[0].value)} timmar</p>
+            <p>{payload[1].payload.date} - {Math.round(payload[1].value)} timmar</p>
+            <p>{payload[1].payload.date} - {Math.round(payload[2].value)} timmar</p>
+          </div>
+        );
+    } else if (active && payload && payload.length == 4) {
+      return (
+          <div className="custom-tooltip">
+            <p>{payload[0].payload.date} - {Math.round(payload[0].value)} timmar</p>
+            <p>{payload[1].payload.date} - {Math.round(payload[1].value)} timmar</p>
+            <p>{payload[1].payload.date} - {Math.round(payload[2].value)} timmar</p>
+            <p>{payload[1].payload.date} - {Math.round(payload[3].value)} timmar</p>
+          </div>
+        );
+    }  else {
       return([])
     }
   }
@@ -122,17 +139,19 @@ const ShadowPredictionGraph = function({
               xAxisId="1" 
               angle={-45} 
               textAnchor="end" 
+              type="category"
               dataKey={xDataKey}
-              tickCount={12}
+              tickCount={6}
+
               tickFormatter={(tick) => {
                 let d = new Date(tick).toLocaleString('default', { month: 'short' })
                 return d.charAt(0).toUpperCase() + d.slice(1)
                 }}>
             </XAxis>
-            <XAxis xAxisId="0" dataKey="date" tick={false} allowDuplicatedCategory={false} />
-            <XAxis xAxisId="3" dataKey="date" tick={false} allowDuplicatedCategory={false} axisLine={false} />
-            <XAxis xAxisId="4" dataKey="date" tick={false} allowDuplicatedCategory={false} axisLine={false} />
-            <XAxis xAxisId="2" dataKey="date" tick={false} allowDuplicatedCategory={false} axisLine={false} />
+            <XAxis xAxisId="0" dataKey="date" tick={false}  axisLine={false} />
+            <XAxis xAxisId="3" dataKey="date" tick={false}  axisLine={false} />
+            <XAxis xAxisId="4" dataKey="date" tick={false}  axisLine={false} />
+            <XAxis xAxisId="2" dataKey="date" tick={false}  axisLine={false} />
             <YAxis
               tickFormatter={(tick) => tick + " h"}
               domain={[0, dataMax => Math.round(dataMax * 1.1, 0)]}
