@@ -42,7 +42,7 @@ const ShadowPredictionGraph = function({
     }
   }
 
-  const getTodaysData = () => {
+  const getTodaysDataOnKey = (key) => {
     let d = new Date();
     let flightDay;
     try{
@@ -59,13 +59,19 @@ const ShadowPredictionGraph = function({
         "noFlightsMotorCumSum": null,
         "noFlightsGliderCumSum": null,
         "membersCumSum": null,
+        "cumSumByPlane": {},
         "flights": []
       }
     }
-    return flightDay;
+    if (key.includes("cumSumByPlane")){
+      let key1 = "cumSumByPlane"
+      let key2 = key.substring(15).slice(0,-2)
+      return flightDay[key1][key2];
+    }
+    return flightDay[key];
   }
 
-  const getLastYearsData = () => {
+  const getLastYearsDataOnKey = (key) => {
     let d = new Date();
     d.setFullYear( d.getFullYear() - 1 );
     let flightDay;
@@ -83,10 +89,17 @@ const ShadowPredictionGraph = function({
         "noFlightsMotorCumSum": null,
         "noFlightsGliderCumSum": null,
         "membersCumSum": null,
+        "cumSumByPlane": {},
         "flights": []
       }
     }
-    return flightDay;
+    if (key.includes("cumSumByPlane")){
+      let key1 = "cumSumByPlane"
+      let key2 = key.substring(15).slice(0,-2)
+      return flightDay[key1][key2];
+    }
+    return flightDay[key];
+    
   }
 
   return(
@@ -185,9 +198,9 @@ const ShadowPredictionGraph = function({
         </ResponsiveContainer>
       </div>
       <div className="row">
-        <Number number={parseInt(getTodaysData()[yMainDataKey]) || "--"} description="Totalt flygtidsuttag i år fram tills idag"/>
-        <Number number={parseInt(getLastYearsData()[yMainDataKey]) || "--"} description="Totalt flygtidsuttag fg år fram tills motsvarande idag"/>
-        <Number number={parseInt(getTodaysData()[yMainDataKey]) - parseInt(getLastYearsData()[yMainDataKey])  || "--"} description="Skillnad mot fg år"/>
+        <Number number={parseInt(getTodaysDataOnKey(yMainDataKey)) || "0"} description="Totalt flygtidsuttag i år fram tills idag"/>
+        <Number number={parseInt(getLastYearsDataOnKey(yMainDataKey)) || "0"} description="Totalt flygtidsuttag fg år fram tills motsvarande idag"/>
+        <Number number={parseInt(getTodaysDataOnKey(yMainDataKey)) - parseInt(getLastYearsDataOnKey(yMainDataKey))  || "0"} description="Skillnad mot fg år"/>
       </div>
       </div>
       <hr></hr>
