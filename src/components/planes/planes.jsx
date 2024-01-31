@@ -4,6 +4,7 @@ import ShadowPredictionGraph from '../shadowGraph/predictionGraph.jsx'
 
 const Planes = function({
     planes,
+    dataLLY,
     dataLY,
     dataTY,
     dataPrediction
@@ -15,10 +16,10 @@ const Planes = function({
                     header= {"Årligt Flygtidsuttag " + each}
                     xlabel="Datum"
                     ylabel="Ackumulerad flygtid över året"
-                    shadowLegend={"Totalt flygtidsuttag " + (new Date().getFullYear()-1)}
-                    mainLegend={"Totalt flygtidsuttag " + (new Date().getFullYear())}
+                    mainLegend={"Totalt flygtidsuttag"}
                     mainColor= "rgb(44, 158, 245)"
                     shadowColor="rgb(50, 70, 90)"
+                    dataLLY={dataLLY}
                     dataLY={dataLY}
                     dataTY={dataTY}
                     dataPrediction={dataPrediction}

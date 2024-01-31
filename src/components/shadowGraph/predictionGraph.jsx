@@ -6,10 +6,10 @@ import Number from '../number/number.jsx'
 
 const ShadowPredictionGraph = function({
   header,
-  shadowLegend,
   mainLegend,
   mainColor,
   shadowColor,
+  dataLLY,
   dataLY,
   dataTY,
   dataPrediction,
@@ -110,6 +110,7 @@ const ShadowPredictionGraph = function({
               }}>
           </XAxis>
           <XAxis xAxisId="0" dataKey="date" tick={false} />
+          <XAxis xAxisId="3" dataKey="date" tick={false} />
           <XAxis xAxisId="2" dataKey="date" tick={false} axisLine={false} />
           <YAxis
             tickFormatter={(tick) => tick + " h"}>
@@ -117,7 +118,18 @@ const ShadowPredictionGraph = function({
           <Tooltip itemStyle="animation: 'none'" content={<CustomTooltip />} />
           <Legend layout="vertical" iconType="circle"  wrapperStyle={{top: 10, left: 90}}/>
           <Line 
-            name={shadowLegend} 
+            name={mainLegend.concat(" ", (new Date().getFullYear())-2)} 
+            data={dataLLY} 
+            xAxisId="3" 
+            type="monotone" 
+            dataKey={yShadowDataKey} 
+            stroke={shadowColor} 
+            dot={false} 
+            strokeWidth={2}
+            isAnimationActive={false}
+            />
+          <Line 
+            name={mainLegend.concat(" ", (new Date().getFullYear())-1)} 
             data={dataLY} 
             xAxisId="0" 
             type="monotone" 
@@ -128,7 +140,7 @@ const ShadowPredictionGraph = function({
             isAnimationActive={false}
             />
           <Line 
-            name={mainLegend} 
+            name={mainLegend.concat(" ", (new Date().getFullYear()))} 
             data={dataTY} 
             xAxisId="1" 
             type="monotone" 

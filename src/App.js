@@ -23,6 +23,7 @@ import { LineChart, Line, Label, XAxis, YAxis, CartesianGrid, Tooltip, Legend, R
 
 function App() {
   const [bootTime, setBootTime] = React.useState({})
+  const [dataLLY, setDataLLY] = React.useState({})
   const [dataLY, setDataLY] = React.useState({})
   const [dataTY, setDataTY] = React.useState({})
   const [dataTYPrediction, setDataTYPrediction] = React.useState({})
@@ -61,15 +62,18 @@ function App() {
           console.log(res)
           setBootTime(res.bootTime)
           
-          let LY = res.flightCumSum.filter(f => (lastYear.toString().concat('-01-01')) <= f.date && f.date < yyyy.toString().concat('-01-01'))
+          let LLY = res.flightCumSum.filter(f => ((yyyy-2).toString().concat('-01-01')) <= f.date && f.date < (yyyy-1).toString().concat('-01-01'))
+          let LY = res.flightCumSum.filter(f => ((yyyy-1).toString().concat('-01-01')) <= f.date && f.date < yyyy.toString().concat('-01-01'))
           let TY = res.flightCumSum.filter(f => (yyyy.toString().concat('-01-01')) <= f.date && f.date < (yyyy+1).toString().concat('-01-01'))
 
           setMotorPlanes(res.motorPlanes);
           setTowPlanes(res.towPlanes);
           setSailPlanes(res.sailPlanes);
           
+          setDataLLY(LLY);
           setDataLY(LY);
           setDataTY(TY);
+          console.log(TY);
           setDataTYPrediction(res.prediction);
           
         }
@@ -102,10 +106,10 @@ function App() {
             header= "Årligt Flygtidsuttag: Alla klubbflygplan summerat"
             xlabel="Datum"
             ylabel="Ackumulerade årliga motorflygtimmar"
-            shadowLegend={"Flygtimmar " + (new Date().getFullYear()-1)}
-            mainLegend={"Flygtimmar " + (new Date().getFullYear())}
+            mainLegend={"Flygtimmar"}
             mainColor= "rgb(44, 158, 245)"
             shadowColor="rgb(50, 70, 90)"
+            dataLLY={dataLLY}
             dataLY={dataLY}
             dataTY={dataTY}
             dataPrediction={dataTYPrediction}
@@ -122,10 +126,10 @@ function App() {
             header= "Årligt Flygtidsuttag Motorflyg"
             xlabel="Datum"
             ylabel="Ackumulerade årliga motorflygtimmar"
-            shadowLegend={"Motortimmar " + (new Date().getFullYear()-1)}
-            mainLegend={"Motortimmar " + (new Date().getFullYear())}
+            mainLegend={"Motortimmar"}
             mainColor= "#f1f52c"
             shadowColor="#4b4d0e"
+            dataLLY={dataLLY}
             dataLY={dataLY}
             dataTY={dataTY}
             dataPrediction={dataTYPrediction}
@@ -142,10 +146,10 @@ function App() {
             header="Årligt Flygtidsuttag Segelflyg"
             xlabel="Datum"
             ylabel="Ackumulerade årliga segelflygtimmar"
-            shadowLegend={"Segelflygtimmar " + (new Date().getFullYear()-1)}
-            mainLegend={"Segelflygtimmar " + (new Date().getFullYear())}
+            mainLegend={"Segelflygtimmar"}
             mainColor= "#22ba35"
             shadowColor="#0e4d16"
+            dataLLY={dataLLY}
             dataLY={dataLY}
             dataTY={dataTY}
             dataPrediction={dataTYPrediction}
@@ -162,10 +166,10 @@ function App() {
             header="Årligt Flygtidsuttag Bogsering"
             xlabel="Datum"
             ylabel="Ackumulerade årliga bogsertimmar"
-            shadowLegend={"Bogsertimmar " + (new Date().getFullYear()-1)}
-            mainLegend={"Bogsertimmar " + (new Date().getFullYear())}
+            mainLegend={"Bogsertimmar"}
             mainColor= "#a83297"
             shadowColor="#591a50"
+            dataLLY={dataLLY}
             dataLY={dataLY}
             dataTY={dataTY}
             dataPrediction={dataTYPrediction}
@@ -182,6 +186,7 @@ function App() {
       <div className="col">
         <Planes
           planes={motorPlanes}
+          dataLLY={dataLLY}
           dataLY={dataLY}
           dataTY={dataTY}
           dataPrediction={dataTYPrediction}
@@ -194,6 +199,7 @@ function App() {
       <div className="col">
         <Planes
           planes={sailPlanes}
+          dataLLY={dataLLY}
           dataLY={dataLY}
           dataTY={dataTY}
           dataPrediction={dataTYPrediction}
@@ -205,6 +211,7 @@ function App() {
       <div className="col">
         <Planes
           planes={towPlanes}
+          dataLLY={dataLLY}
           dataLY={dataLY}
           dataTY={dataTY}
           dataPrediction={dataTYPrediction}
