@@ -129,12 +129,14 @@ const ShadowPredictionGraph = function({
                 return d.charAt(0).toUpperCase() + d.slice(1)
                 }}>
             </XAxis>
-            <XAxis xAxisId="0" dataKey="date" tick={false} />
-            <XAxis xAxisId="3" dataKey="date" tick={false} axisLine={false} />
-            <XAxis xAxisId="4" dataKey="date" tick={false} axisLine={false} />
-            <XAxis xAxisId="2" dataKey="date" tick={false} axisLine={false} />
+            <XAxis xAxisId="0" dataKey="date" tick={false} allowDuplicatedCategory={false} />
+            <XAxis xAxisId="3" dataKey="date" tick={false} allowDuplicatedCategory={false} axisLine={false} />
+            <XAxis xAxisId="4" dataKey="date" tick={false} allowDuplicatedCategory={false} axisLine={false} />
+            <XAxis xAxisId="2" dataKey="date" tick={false} allowDuplicatedCategory={false} axisLine={false} />
             <YAxis
-              tickFormatter={(tick) => tick + " h"}>
+              tickFormatter={(tick) => tick + " h"}
+              domain={[0, dataMax => Math.round(dataMax * 1.1, 0)]}
+              >
             </YAxis>
             <Tooltip itemStyle="animation: 'none'" content={<CustomTooltip />} />
             <Legend layout="vertical" iconType="circle"  wrapperStyle={{top: 10, left: 90}}/>
