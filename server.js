@@ -18,6 +18,7 @@ const lastYear = yyyy-1
 const lastlastYear = yyyy-2
 const lastlastlastYear = yyyy-3
 const lastlastlastlastYear = yyyy-4
+const earliestAnalysisYear = lastlastlastYear // CHANGEME when you change start of analysis
 let LYPredSmooth;
 const OUR_GLIDERS = ['SE-TZY', 'SE-URG', 'SE-TVL', 'SE-UUY', 'SE-UFA', 'SE-SKZ']
 const OUR_MOTORPLANES = ['SE-MLT', 'SE-MMB', 'SE-MMC', 'SE-KBT']
@@ -41,7 +42,7 @@ const getData = () => {
     urlencoded.append("app_token", process.env.MYWEBLOG_TOKEN)
     urlencoded.append("returnType", "JSON")
     urlencoded.append("limit", "20000")
-    urlencoded.append("from_date", lastlastYear + "-01-01")
+    urlencoded.append("from_date", earliestAnalysisYear + "-01-01")
     urlencoded.append("to_date", dd + '-' + mm + '-' + yyyy);
 
     //urlencoded.append("limit", "50")
@@ -89,7 +90,7 @@ const updateFlightData = async () => {
     
     // Init cumsum list with empty buckets
 
-    for (let d = new Date(lastlastYear, 0, 1); d <= new Date(yyyy, 11, 31); d.setDate(d.getDate() + 1)) {
+    for (let d = new Date(earliestAnalysisYear, 0, 1); d <= new Date(yyyy, 11, 31); d.setDate(d.getDate() + 1)) {
       let dateString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0');
       flightDataByDate[dateString] = {
         "date": dateString,
@@ -119,7 +120,7 @@ const updateFlightData = async () => {
     )
 
     // Calculate cumsum and reset on every new year
-    for (let d = new Date(lastlastYear, 0, 2); d <= today; d.setDate(d.getDate() + 1)) {
+    for (let d = new Date(earliestAnalysisYear, 0, 2); d <= today; d.setDate(d.getDate() + 1)) {
       let thisDate = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, '0') + "-" + String(d.getDate()).padStart(2, '0');
 
       // Reset cumsum in the begining of the year

@@ -4,9 +4,7 @@ import ShadowPredictionGraph from '../shadowGraph/predictionGraph.jsx'
 
 const Planes = function({
     planes,
-    dataLLY,
-    dataLY,
-    dataTY,
+    dataHistoric,
     dataPrediction
   }){
     if(planes.length > 0){
@@ -19,9 +17,7 @@ const Planes = function({
                     mainLegend={"Totalt flygtidsuttag"}
                     mainColor= "rgb(44, 158, 245)"
                     shadowColor="rgb(50, 70, 90)"
-                    dataLLY={dataLLY}
-                    dataLY={dataLY}
-                    dataTY={dataTY}
+                    dataHistoric={dataHistoric}
                     dataPrediction={dataPrediction}
                     dataPredictionKey = {each}
                     xDataKey="date"

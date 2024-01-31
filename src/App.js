@@ -23,16 +23,13 @@ import { LineChart, Line, Label, XAxis, YAxis, CartesianGrid, Tooltip, Legend, R
 
 function App() {
   const [bootTime, setBootTime] = React.useState({})
-  const [dataLLY, setDataLLY] = React.useState({})
-  const [dataLY, setDataLY] = React.useState({})
-  const [dataTY, setDataTY] = React.useState({})
+  const [dataHistoric, setDataHistoric] = React.useState([])
   const [dataTYPrediction, setDataTYPrediction] = React.useState({})
   const [motorPlanes, setMotorPlanes] = React.useState({})
   const [towPlanes, setTowPlanes] = React.useState({})
   const [sailPlanes, setSailPlanes] = React.useState({})
   const today = new Date();
   const yyyy = today.getFullYear();
-  const lastYear = yyyy-1
 
   React.useEffect(()=>{
     setMotorPlanes([]);
@@ -61,19 +58,12 @@ function App() {
           }
           console.log(res)
           setBootTime(res.bootTime)
-          
-          let LLY = res.flightCumSum.filter(f => ((yyyy-2).toString().concat('-01-01')) <= f.date && f.date < (yyyy-1).toString().concat('-01-01'))
-          let LY = res.flightCumSum.filter(f => ((yyyy-1).toString().concat('-01-01')) <= f.date && f.date < yyyy.toString().concat('-01-01'))
-          let TY = res.flightCumSum.filter(f => (yyyy.toString().concat('-01-01')) <= f.date && f.date < (yyyy+1).toString().concat('-01-01'))
 
           setMotorPlanes(res.motorPlanes);
           setTowPlanes(res.towPlanes);
           setSailPlanes(res.sailPlanes);
           
-          setDataLLY(LLY);
-          setDataLY(LY);
-          setDataTY(TY);
-          console.log(TY);
+          setDataHistoric(res.flightCumSum);
           setDataTYPrediction(res.prediction);
           
         }
@@ -109,9 +99,7 @@ function App() {
             mainLegend={"Flygtimmar"}
             mainColor= "rgb(44, 158, 245)"
             shadowColor="rgb(50, 70, 90)"
-            dataLLY={dataLLY}
-            dataLY={dataLY}
-            dataTY={dataTY}
+            dataHistoric={dataHistoric}
             dataPrediction={dataTYPrediction}
             dataPredictionKey = "predictionFlightHoursAllCumSum"
             xDataKey="date"
@@ -129,9 +117,7 @@ function App() {
             mainLegend={"Motortimmar"}
             mainColor= "#f1f52c"
             shadowColor="#4b4d0e"
-            dataLLY={dataLLY}
-            dataLY={dataLY}
-            dataTY={dataTY}
+            dataHistoric={dataHistoric}
             dataPrediction={dataTYPrediction}
             dataPredictionKey = "predictionFlightHoursMotorCumSum"
             xDataKey="date"
@@ -149,9 +135,7 @@ function App() {
             mainLegend={"Segelflygtimmar"}
             mainColor= "#22ba35"
             shadowColor="#0e4d16"
-            dataLLY={dataLLY}
-            dataLY={dataLY}
-            dataTY={dataTY}
+            dataHistoric={dataHistoric}
             dataPrediction={dataTYPrediction}
             dataPredictionKey = "predictionFlightHoursGliderCumSum"
             xDataKey="date"
@@ -169,9 +153,7 @@ function App() {
             mainLegend={"Bogsertimmar"}
             mainColor= "#a83297"
             shadowColor="#591a50"
-            dataLLY={dataLLY}
-            dataLY={dataLY}
-            dataTY={dataTY}
+            dataHistoric={dataHistoric}
             dataPrediction={dataTYPrediction}
             dataPredictionKey = "predictionFlightHoursTowCumSum"
             xDataKey="date"
@@ -186,9 +168,7 @@ function App() {
       <div className="col">
         <Planes
           planes={motorPlanes}
-          dataLLY={dataLLY}
-          dataLY={dataLY}
-          dataTY={dataTY}
+          dataHistoric={dataHistoric}
           dataPrediction={dataTYPrediction}
         />
       </div>
@@ -199,9 +179,7 @@ function App() {
       <div className="col">
         <Planes
           planes={sailPlanes}
-          dataLLY={dataLLY}
-          dataLY={dataLY}
-          dataTY={dataTY}
+          dataHistoric={dataHistoric}
           dataPrediction={dataTYPrediction}
         />
       </div>
@@ -211,9 +189,7 @@ function App() {
       <div className="col">
         <Planes
           planes={towPlanes}
-          dataLLY={dataLLY}
-          dataLY={dataLY}
-          dataTY={dataTY}
+          dataHistoric={dataHistoric}
           dataPrediction={dataTYPrediction}
         />
       </div>
