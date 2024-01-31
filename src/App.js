@@ -29,6 +29,9 @@ function App() {
   const [motorPlanes, setMotorPlanes] = React.useState({})
   const [towPlanes, setTowPlanes] = React.useState({})
   const [sailPlanes, setSailPlanes] = React.useState({})
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const lastYear = yyyy-1
 
   React.useEffect(()=>{
     setMotorPlanes([]);
@@ -58,9 +61,9 @@ function App() {
           console.log(res)
           setBootTime(res.bootTime)
           
-          let LY = res.flightCumSum.filter(f => ('2021-12-31' < f.date && f.date < '2023-01-01'))
-          let TY = res.flightCumSum.filter(f => ('2022-12-31' < f.date && f.date < '2024-01-01'))
-          
+          let LY = res.flightCumSum.filter(f => (lastYear.toString().concat('-01-01')) <= f.date && f.date < yyyy.toString().concat('-01-01'))
+          let TY = res.flightCumSum.filter(f => (yyyy.toString().concat('-01-01')) <= f.date && f.date < (yyyy+1).toString().concat('-01-01'))
+
           setMotorPlanes(res.motorPlanes);
           setTowPlanes(res.towPlanes);
           setSailPlanes(res.sailPlanes);

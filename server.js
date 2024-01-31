@@ -78,7 +78,12 @@ const updateBookingData = async () => {
 const updateFlightData = async () => {
     const data = await getData()    
 
+    // Print the first and last entry of the logbook
     console.log(data.result.FlightLog[0]);
+    if (data.result.FlightLog.length > 0){
+      console.log(data.result.FlightLog[data.result.FlightLog.length-1]);
+    }
+    
     // Init cumsum list with empty buckets
 
     for (let d = new Date(lastYear, 0, 1); d <= new Date(yyyy, 11, 31); d.setDate(d.getDate() + 1)) {
@@ -171,8 +176,8 @@ const updateFlightData = async () => {
     cumSumFlightList = tmp_cumSumFlightList;
  
     // Predictions
-    let LY = tmp_cumSumFlightList.filter(f => ('2021-12-31' < f.date && f.date < '2023-01-01'))
-    let TY = tmp_cumSumFlightList.filter(f => ('2022-12-31' < f.date && f.date < '2024-01-01'))
+    let LY = tmp_cumSumFlightList.filter(f => (lastYear.toString().concat('-01-01')) <= f.date && f.date < yyyy.toString().concat('-01-01'))
+    let TY = tmp_cumSumFlightList.filter(f => (yyyy.toString().concat('-01-01')) <= f.date && f.date < (yyyy+1).toString().concat('-01-01'))
     
     let _largestDateTYLY = new Date()
     _largestDateTYLY.setFullYear(_largestDateTYLY.getFullYear() - 1 );
