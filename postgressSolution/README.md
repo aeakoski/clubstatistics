@@ -16,3 +16,12 @@ node pgfiller
 ```
 node get
 ```
+
+
+docker run -d -p 8080:8088 -e "SUPERSET_SECRET_KEY=secret_key" --name superset apache/superset
+
+
+Get password token
+az account get-access-token --resource https://RESOURCE.database.windows.net
+
+Download cert from azure web portal

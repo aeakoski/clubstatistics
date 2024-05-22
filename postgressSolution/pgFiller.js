@@ -3,24 +3,24 @@ const fetch = require('node-fetch');
 const { Headers } = require('node-fetch');
 const { log } = require('console');
 const { Client } = require('pg');
+const fs = require('fs');
 
 const dbConfig = {
-  user: 'postgres',
-  host: 'localhost',
-  database: 'osfk',
-  password: 'password', // Update with your PostgreSQL password
+  user: 'USERNAME.onmicrosoft.com',
+  host: 'SCHEMA.postgres.database.azure.com',
+  database: 'USERNAME',
+  password: 'PASSWORD', // Update with your PostgreSQL password
   port: 5432,
+  ssl: { 
+    ca: fs.readFileSync("./DigiCertGlobalRootCA.crt.pem")
+  }
 };
 
 const today = new Date();
 const dd = String(today.getDate()).padStart(2, '0');
 const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
 const yyyy = today.getFullYear();
-const lastYear = yyyy-1
-const lastlastYear = yyyy-2
-const lastlastlastYear = yyyy-3
-const lastlastlastlastYear = yyyy-4
-const earliestAnalysisYear = lastYear // CHANGEME when you change start of analysis
+const earliestAnalysisYear = yyyy-6 // CHANGEME when you change start of analysis
 
 let flightLogs = []
 
@@ -72,35 +72,49 @@ const updateFlightData = async () => {
 // Create a new PostgreSQL client
 const client = new Client(dbConfig);
 
+function validateTimeString(inputString, defaultValue) {
+  // Regular expression for HH:mm format
+  const regex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
+
+  if (regex.test(inputString)) {
+      // String is in HH:mm format
+      return inputString;
+  } else {
+      // String is not in HH:mm format, set it to "13:00"
+      return defaultValue;
+  }
+}
+
 // Function to insert data into the FlightLog table
 async function insertData(d) {
   try {
     // Connect to the PostgreSQL database
     await client.connect();
-
+    let query = `INSERT INTO flightlog (
+      flight_datum, ac_id, regnr, fullname, departure, via, arrival,
+      block_start, block_end, block_total, airborne_start, airborne_end,
+      airborne_total, tach_start, tach_end, tach_total, flights, distance,
+      nature_beskr, comment, rowID
+    )
+    VALUES 
+    `
     // Loop through the data array and insert each object into the FlightLog table
     for (const data of d) {
       //console.log(data)
-      const query = `
-          INSERT INTO flightlog (
-            flight_datum, ac_id, regnr, fullname, departure, via, arrival,
-            block_start, block_end, block_total, airborne_start, airborne_end,
-            airborne_total, tach_start, tach_end, tach_total, flights, distance,
-            nature_beskr, comment, rowID
-          )
-          VALUES (
+      query = query + `
+      (
             '${data.flight_datum}',
             ${data.ac_id},
             '${data.regnr}',
-            '${data.fullname}',
+            'Redacted',
             '${data.departure}',
             '${data.via}',
             '${data.arrival}',
             ${data.block_start},
             ${data.block_end},
             ${data.block_total},
-            '${data.airborne_start}',
-            '${data.airborne_end}',
+            '${validateTimeString(data.airborne_start, "13:00")}',
+            '${validateTimeString(data.airborne_end, "13:30")}',
             ${data.airborne_total},
             ${data.tach_start},
             ${data.tach_end},
@@ -110,40 +124,44 @@ async function insertData(d) {
             '${data.nature_beskr}',
             '${data.comment}',
             ${data.rowID}
-          )
-          ON CONFLICT (rowId)
-          DO UPDATE SET
-            flight_datum = '${data.flight_datum}',
-            ac_id = ${data.ac_id},
-            regnr = '${data.regnr}',
-            fullname = '${data.fullname}',
-            departure = '${data.departure}',
-            via = '${data.via}',
-            arrival = '${data.arrival}',
-            block_start = ${data.block_start},
-            block_end = ${data.block_end},
-            block_total = ${data.block_total},
-            airborne_start = '${data.airborne_start}',
-            airborne_end = '${data.airborne_end}',
-            airborne_total = ${data.airborne_total},
-            tach_start = ${data.tach_start},
-            tach_end = ${data.tach_end},
-            tach_total = ${data.tach_total},
-            flights = ${data.flights},
-            distance = ${data.distance},
-            nature_beskr = '${data.nature_beskr}',
-            comment = '${data.comment}';
-        `;
-
-      // Execute the insert query
-      let r = await client.query(query);
-      console.log(query)
-      console.log("Result from querry");
-      console.log(r);
-      
+          ),`;
+        
     }
+    
+    query = query.slice(0, -1); // remove last comma
 
+    query = query + `
+    ON CONFLICT (rowId)
+          DO UPDATE SET
+            flight_datum = excluded.flight_datum,
+            ac_id = excluded.ac_id,
+            regnr = excluded.regnr,
+            fullname = 'Redacted',
+            departure = excluded.departure,
+            via = excluded.via,
+            arrival = excluded.arrival,
+            block_start = excluded.block_start,
+            block_end = excluded.block_end,
+            block_total = excluded.block_total,
+            airborne_start = excluded.airborne_start,
+            airborne_end = excluded.airborne_end,
+            airborne_total = excluded.airborne_total,
+            tach_start = excluded.tach_start,
+            tach_end = excluded.tach_end,
+            tach_total = excluded.tach_total,
+            flights = excluded.flights,
+            distance = excluded.distance,
+            nature_beskr = excluded.nature_beskr,
+            comment = excluded.comment;
+    `
+    // Execute the insert query
+    //console.log(query);
+    let r = await client.query(query);
+    
+    console.log("Result from querry");
+    console.log(r);
     console.log('Data inserted successfully!');
+
   } catch (error) {
     console.error('Error inserting data:', error);
   } finally {
