@@ -4,6 +4,9 @@ const { log } = require('console');
 const { BigQuery } = require('@google-cloud/bigquery');
 const fs = require('fs');
 const { not } = require('mathjs');
+const crypto = require('crypto');
+
+
 
 // Create a new BigQuery client
 const bigquery = new BigQuery({ projectId: 'osfk-it' });
@@ -21,9 +24,50 @@ const lastYear = yyyy-1
 const lastlastYear = yyyy-2
 const lastlastlastYear = yyyy-3
 const lastlastlastlastYear = yyyy-4
-const earliestAnalysisYear = lastYear // CHANGEME when you change start of analysis
+const lastlastlastlastlastYear = yyyy-6
+const earliestAnalysisYear = lastlastlastlastlastYear // CHANGEME when you change start of analysis
 
 let flightLogs = []
+
+let anonNames = {}
+
+const hashCode = (str) => {
+  // Generate a hash from the input string
+  return crypto.createHash('sha256').update(str).digest('hex');
+};
+
+const seedRandom = (seed) => {
+  // Create a random number generator using the seed
+  let x = parseInt(seed.slice(0, 8), 16); // Use first 8 characters of the seed hash for seeding
+  return () => {
+    // Simple linear congruential generator (LCG)
+    x = (x * 1664525 + 1013904223) % 4294967296;
+    return x / 4294967296;
+  };
+};
+
+const generateRandomString = (length, random) => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(random() * characters.length));
+  }
+  return result;
+};
+
+const getAnonName = (name) => {
+  if (anonNames[name]) {
+    return anonNames[name];
+  }
+
+  const seed = hashCode(name);
+  const random = seedRandom(seed);
+
+  const randomString = generateRandomString(10, random); // Generate a random string of length 10
+  anonNames[name] = randomString;
+
+  return randomString;
+};
 
 const getData = () => {
 
@@ -106,7 +150,13 @@ const updateFlightData = async () => {
       console.log(_flightLogs)
     }
     let flightLogs = _flightLogs.result.FlightLog;
-    console.log(flightLogs);
+    
+    if (Array.isArray(flightLogs)) {
+      console.log(flightLogs[0]);
+    } else {
+      console.log(flightLogs);
+    }
+    
     try {
         // Check if the table exists
         const [tableExists] = await bigquery.dataset(datasetId).table(tableId).exists();
@@ -126,6 +176,9 @@ const updateFlightData = async () => {
             if (log.comment && log.comment.includes(',')) {
                 log.comment = log.comment.replace(/,/g, '');
             }
+            if (log.comment && log.comment.includes('"')) {
+              log.comment = log.comment.replace(/"/g, '');
+            }
             if (log.nature_beskr && log.nature_beskr.includes(',')) {
                 log.nature_beskr = log.nature_beskr.replace(/,/g, '');
             }
@@ -133,15 +186,24 @@ const updateFlightData = async () => {
             if (log.block_start && log.block_start.includes('.')) {
               log.block_start = log.block_start.replace(/\./g, '0');
             }
+            if (log.block_start && log.block_start.includes(',')) {
+              log.block_start = log.block_start.replace(/,/g, '0');
+            }
             if (log.block_start) log.block_start += ":00";
             
             if (log.block_end && log.block_end.includes('.')) {
               log.block_end = log.block_end.replace(/\./g, '0');
             }
+            if (log.block_end && log.block_end.includes(',')) {
+              log.block_end = log.block_end.replace(/,/g, '0');
+            }
             if (log.block_end) log.block_end += ":00";
             
             if (log.airborne_start && log.airborne_start.includes('.')) {
               log.airborne_start = log.airborne_start.replace(/\./g, '1');
+            }
+            if (log.airborne_start && log.airborne_start.includes(',')) {
+              log.airborne_start = log.airborne_start.replace(/,/g, '1');
             }
             if (log.airborne_start) log.airborne_start += ":00";
             
@@ -151,17 +213,20 @@ const updateFlightData = async () => {
             if (log.airborne_end && log.airborne_end.includes('.')) {
               log.airborne_end = log.airborne_end.replace(/\./g, '0');
             }
+            if (log.airborne_end && log.airborne_end.includes(',')) {
+              log.airborne_end = log.airborne_end.replace(/,/g, '0');
+            }
             if (log.airborne_end) log.airborne_end += ":00";
             
-            if (log.fullname) log.fullname = "";
+            if (log.fullname) log.fullname = getAnonName(log.fullname);
             
             return Object.values(log).join(',') + '\n';
         }).join('');
 
         const timestamp = new Date().toISOString().replace(/[-:]/g, '').replace('T', '_').replace(/\..+/, '');
-        const filename = `flight_logs_${timestamp}.csv`;
+        const filename = `csv/flight_logs_${timestamp}.csv`;
 
-        fs.writeFileSync("csv\\" + filename, csvData);
+        fs.writeFileSync(filename, csvData);
         console.log('Data written to flight_logs.csv');
         
         const [job] = await bigquery
