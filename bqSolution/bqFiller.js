@@ -3,6 +3,7 @@ const { Headers } = require('node-fetch');
 const { log } = require('console');
 const { BigQuery } = require('@google-cloud/bigquery');
 const fs = require('fs');
+const path = require('path');
 const { not } = require('mathjs');
 const crypto = require('crypto');
 
@@ -224,7 +225,17 @@ const updateFlightData = async () => {
         }).join('');
 
         const timestamp = new Date().toISOString().replace(/[-:]/g, '').replace('T', '_').replace(/\..+/, '');
-        const filename = `csv/flight_logs_${timestamp}.csv`;
+        const csvFolder = "csv"
+        const filename = `${csvFolder}/flight_logs_${timestamp}.csv`;
+
+        const dir = path.join(__dirname, 'csv');
+
+        // Check if the CSV directory already exists
+        if (!fs.existsSync(dir)) {
+            // Create the directory
+            fs.mkdirSync(dir, { recursive: true });
+            console.log('Initiated directory "csv" created successfully.');
+        }
 
         fs.writeFileSync(filename, csvData);
         console.log('Data written to flight_logs.csv');
