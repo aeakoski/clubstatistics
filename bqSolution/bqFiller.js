@@ -25,7 +25,7 @@ const lastYear = yyyy-1
 const lastlastYear = yyyy-2
 const lastlastlastYear = yyyy-3
 const lastlastlastlastYear = yyyy-4
-const lastlastlastlastlastYear = yyyy-6
+const lastlastlastlastlastYear = yyyy-10
 const earliestAnalysisYear = lastlastlastlastlastYear // CHANGEME when you change start of analysis
 
 let flightLogs = []
@@ -206,6 +206,9 @@ const updateFlightData = async () => {
             if (log.airborne_start && log.airborne_start.includes(',')) {
               log.airborne_start = log.airborne_start.replace(/,/g, '1');
             }
+            if (log.airborne_start && log.airborne_start.includes(';')) {
+              log.airborne_start = log.airborne_start.replace(/;/g, '1');
+            }
             if (log.airborne_start) log.airborne_start += ":00";
             
             if (log.airborne_end && log.airborne_end.includes('....')) {
@@ -216,6 +219,9 @@ const updateFlightData = async () => {
             }
             if (log.airborne_end && log.airborne_end.includes(',')) {
               log.airborne_end = log.airborne_end.replace(/,/g, '0');
+            }
+            if (log.airborne_end && log.airborne_end.includes(';')) {
+              log.airborne_end = log.airborne_end.replace(/;/g, '0');
             }
             if (log.airborne_end) log.airborne_end += ":00";
             
