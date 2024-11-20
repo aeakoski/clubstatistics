@@ -1,6 +1,6 @@
-# Myweblog flightclub statistics
 
 # Install
+
 Set the environment variables needed by the `main.js` server.
 ```
 export MYWEBLOG_SYSTEM_USER=xxx-xxxx
@@ -9,7 +9,6 @@ export MYWEBLOG_TOKEN=xxxxxxxxxxxx
 
 npm install
 
-
 -- In powershell:
 $env:MYWEBLOG_SYSTEM_USER = "xxxxxxxxxxxx"
 $env:MYWEBLOG_SYSTEM_PASSWORD = "xxxxxxxxxxxx"
@@ -17,23 +16,37 @@ $env:MYWEBLOG_TOKEN = "xxxxxxxxxxxx"
 $env:NODE_OPTIONS = "--openssl-legacy-provider"
 ```
 
-# Build
-**npm run build**
-```
-react-scripts build && (npm install)
-```
+npm install
+
+sudo snap install google-cloud-cli --classic
+
+gcloud auth application-default login
 
 # Run
-**npm start**
-```
-node server.js
+
+## Populate data
+node bqFiller
+
+## Re-create lost views (views are deleted after 60 days)
+node createViews
+
+
+# Docker (WIP)
+1. Create the docker image
 
 ```
-Dashboard should be visible on `localhost:8889`
+docker build -t osfk-bq .
 
-# Preview
-![alt text](./images/screenshot.png "Screenshot of dashboard")
+docker run -it osfk-bq:latest
 
-# Deployment instructions
+```
 
-https://dev.to/myogeshchavan97/how-to-deploy-react-node-js-application-to-heroku-4jb4
+2. Run the pgFiller
+```
+node bqFiller
+```
+
+3. See results
+```
+Navigate into BigQuery
+```
