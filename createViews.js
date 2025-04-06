@@ -5,6 +5,13 @@ const { BigQuery } = require('@google-cloud/bigquery');
 // Initialize BigQuery client
 const bigquery = new BigQuery({ projectId: 'osfk-it' });
 
+// Define view dependencies and order
+const VIEW_CREATION_ORDER = {
+  'flight_log': ['first_flight_at']
+  
+  // Add more datasets and their view order as needed
+};
+
 /**
  * Create a dataset if it doesn't already exist.
  * @param {string} datasetId - Full dataset ID including project ID.
@@ -35,7 +42,7 @@ async function createDatasetIfNotExists(datasetId) {
 async function createOrUpdateView(datasetId, viewId, viewSql) {
   const dataset = bigquery.dataset(datasetId);
   const table = dataset.table(viewId);
-
+  console.log(viewId);
   try {
     // Try to get the view
     const [tableMetadata] = await table.get();
@@ -75,39 +82,83 @@ async function createOrUpdateView(datasetId, viewId, viewSql) {
 }
 
 /**
- * Process the folder to create or update datasets and views based on the folder structure.
- * @param {string} folderPath - Path to the models folder.
+ * Load all SQL files from all datasets
+ * @param {string} folderPath - Path to the models folder
+ * @returns {Object} - Map of dataset and their views with SQL content
  */
-async function processFolder(folderPath) {
+function loadAllViews(folderPath) {
   const datasets = fs.readdirSync(folderPath);
+  const allViews = {};
   
   for (const datasetName of datasets) {
     const datasetPath = path.join(folderPath, datasetName);
-    const datasetId = `${datasetName}`;
-
-    // Check if dataset exists, if not create it
-    await createDatasetIfNotExists(datasetId);
-
-    // Process all SQL files (views) in the dataset folder
-    const viewFiles = fs.readdirSync(datasetPath);
+    const viewFiles = fs.readdirSync(datasetPath).filter(file => file.endsWith('.sql'));
     
-    for (const viewFile of viewFiles) {
-      if (viewFile.endsWith('.sql')) {
-        const viewId = viewFile.replace('.sql', '');
-        const viewFilePath = path.join(datasetPath, viewFile);
-        
-        // Read the SQL query from the file
-        const viewSql = fs.readFileSync(viewFilePath, 'utf8');
-        
-        // Create or update the view based on the SQL content
-        await createOrUpdateView(datasetId, viewId, viewSql);
-      }
+    allViews[datasetName] = viewFiles.map(viewFile => ({
+      viewId: viewFile.replace('.sql', ''),
+      sql: fs.readFileSync(path.join(datasetPath, viewFile), 'utf8')
+    }));
+  }
+  
+  return allViews;
+}
+
+/**
+ * Get ordered views based on dependencies across all datasets
+ * @param {Object} allViews - Map of datasets and their views
+ * @returns {Array} - Ordered array of views with dataset and view info
+ */
+function getOrderedViews(allViews) {
+  const orderedViews = [];
+  
+  // First add views in specified order
+  Object.entries(VIEW_CREATION_ORDER).forEach(([datasetName, orderedViewIds]) => {
+    if (allViews[datasetName]) {
+      orderedViewIds.forEach(viewId => {
+        const view = allViews[datasetName].find(v => v.viewId === viewId);
+        if (view) {
+          orderedViews.push({ datasetName, ...view });
+          allViews[datasetName] = allViews[datasetName].filter(v => v.viewId !== viewId);
+        }
+      });
     }
+  });
+  
+  // Add remaining views
+  Object.entries(allViews).forEach(([datasetName, views]) => {
+    views.forEach(view => {
+      orderedViews.push({ datasetName, ...view });
+    });
+  });
+  
+  return orderedViews;
+}
+
+/**
+ * Process all views in the correct order
+ * @param {string} folderPath - Path to the models folder
+ */
+async function processFolder(folderPath) {
+  // First load all views from all datasets
+  const allViews = loadAllViews(folderPath);
+  
+  // Get views in correct order
+  const orderedViews = getOrderedViews(allViews);
+  
+  // Create datasets and views in order
+  for (const view of orderedViews) {
+    const { datasetName, viewId, sql } = view;
+    
+    // Ensure dataset exists
+    await createDatasetIfNotExists(datasetName);
+    
+    // Create or update view
+    await createOrUpdateView(datasetName, viewId, sql);
   }
 }
 
 // Main function to run the script
-(async () => {
+async function main() {
   try {
     // Specify the path to the "models" folder
     const modelsFolderPath = 'models';
@@ -116,5 +167,9 @@ async function processFolder(folderPath) {
     await processFolder(modelsFolderPath);
   } catch (err) {
     console.error('Error:', err);
+    throw err;
   }
-})();
+}
+
+// Export the main function
+module.exports = main;

@@ -9,6 +9,9 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+sensors
+osfk
+
 dbt-project/dbt-env
 
 build

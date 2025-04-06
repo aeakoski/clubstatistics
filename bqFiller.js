@@ -116,6 +116,7 @@ async function createTable() {
     { name: 'ac_id', type: 'INTEGER' },
     { name: 'regnr', type: 'STRING' },
     { name: 'fullname', type: 'STRING' },
+    { name: 'instructor_fullname', type: 'STRING' },
     { name: 'departure', type: 'STRING' },
     { name: 'via', type: 'STRING' },
     { name: 'arrival', type: 'STRING' },
@@ -226,6 +227,8 @@ const updateFlightData = async () => {
             if (log.airborne_end) log.airborne_end += ":00";
             
             if (log.fullname) log.fullname = getAnonName(log.fullname);
+
+            if (log.instructor_fullname) log.instructor_fullname = getAnonName(log.instructor_fullname);
             
             return Object.values(log).join(',') + '\n';
         }).join('');
@@ -259,8 +262,19 @@ const updateFlightData = async () => {
     }
 }
 
-updateFlightData()
-console.log("Done updating initial flight data")
-//console.log(process.env.MYWEBLOG_SYSTEM_PASSWORD);
-//console.log(process.env.MYWEBLOG_TOKEN);
+// Main function to run the script
+async function main() {
+  try {
+    // Your existing main function code here
+    // Make sure to throw any errors that occur
+    await updateFlightData();
+    console.log("Done updating initial flight data");
+  } catch (err) {
+    console.error('Error:', err);
+    throw err;
+  }
+}
+
+// Export the main function
+module.exports = main;
 
