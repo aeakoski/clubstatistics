@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "fill-bq": "node -e \"require('./bqFiller.js')()\""
   },
   "dependencies": {
     "@google-cloud/bigquery": "^7.5.0",

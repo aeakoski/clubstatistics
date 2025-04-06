@@ -7,10 +7,13 @@ const path = require('path');
 const { not } = require('mathjs');
 const crypto = require('crypto');
 
-
-
-// Create a new BigQuery client
-const bigquery = new BigQuery({ projectId: 'osfk-it' });
+// Create a new BigQuery client with credentials from environment variables
+const bigquery = new BigQuery({
+  projectId: process.env.GOOGLE_CLOUD_PROJECT || 'osfk-it',
+  credentials: process.env.GOOGLE_CLOUD_CREDENTIALS ? 
+    JSON.parse(Buffer.from(process.env.GOOGLE_CLOUD_CREDENTIALS, 'base64').toString()) 
+    : undefined
+});
 
 // Define your BigQuery dataset and table ID
 const datasetId = 'flight_log';
@@ -75,14 +78,14 @@ const getData = () => {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded")
     myHeaders.append("Cookie", "mwl_cookie_language=se")
-    console.log("process.env.MYWEBLOG_SYSTEM_USER");
-    console.log(process.env.MYWEBLOG_SYSTEM_USER);
-    console.log(process.env.MYWEBLOG_SYSTEM_USER.length);
-    console.log("process.env.MYWEBLOG_SYSTEM_PASSWORD");
-    console.log(process.env.MYWEBLOG_SYSTEM_PASSWORD);
-    console.log(process.env.MYWEBLOG_SYSTEM_PASSWORD.length);
-    console.log("process.env.MYWEBLOG_TOKEN");
-    console.log(process.env.MYWEBLOG_TOKEN);
+    //console.log("process.env.MYWEBLOG_SYSTEM_USER");
+    //console.log(process.env.MYWEBLOG_SYSTEM_USER);
+    //console.log(process.env.MYWEBLOG_SYSTEM_USER.length);
+    //console.log("process.env.MYWEBLOG_SYSTEM_PASSWORD");
+    //console.log(process.env.MYWEBLOG_SYSTEM_PASSWORD);
+    //console.log(process.env.MYWEBLOG_SYSTEM_PASSWORD.length);
+    //console.log("process.env.MYWEBLOG_TOKEN");
+    //console.log(process.env.MYWEBLOG_TOKEN);
     let urlencoded = new URLSearchParams()
     urlencoded.append("qtype", "GetFlightLog")
     urlencoded.append("mwl_u", process.env.MYWEBLOG_SYSTEM_USER)

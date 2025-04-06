@@ -58,7 +58,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({ message: `${script} already ran today` });
   }
 
-  try {
+  try {  
+
     let scriptModule;
     if (script === 'createViews') {
       scriptModule = require('../../createViews');
