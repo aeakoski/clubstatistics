@@ -1,50 +1,23 @@
 {
   "name": "clubstatistics",
   "version": "1.0.0",
-  "engines": {
-    "node": "22.x"
-  },
   "private": true,
-  "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.35",
-    "@fortawesome/free-solid-svg-icons": "^5.15.3",
-    "@fortawesome/react-fontawesome": "^0.1.14",
-    "@google-cloud/bigquery": "^7.5.0",
-    "@testing-library/jest-dom": "^5.11.10",
-    "@testing-library/react": "^11.2.6",
-    "@testing-library/user-event": "^12.8.3",
-    "bootstrap": "^4.6.0",
-    "express": "^4.17.1",
-    "mathjs": "^11.8.2",
-    "node-fetch": "^2.6.1",
-    "pg": "^8.11.3",
-    "react": "^18.2.0",
-    "react-bootstrap": "^1.5.2",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "^5.0.1",
-    "recharts": "^2.6.2",
-    "web-vitals": "^1.1.1",
-    "next": "^14.1.0",
-    "date-fns": "^3.3.1"
-  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "@google-cloud/bigquery": "^7.5.0",
+    "date-fns": "^3.3.1",
+    "express": "^4.17.1",
+    "mathjs": "^11.8.2",
+    "node-fetch": "^2.6.1",
+    "pg": "^8.11.3",
+    "next": "^14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.19",
