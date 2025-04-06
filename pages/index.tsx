@@ -20,8 +20,8 @@ export default function Home() {
         setStatus('Scripts completed successfully! Redirecting...');
         // Redirect to Looker Studio
         window.location.href = 'https://lookerstudio.google.com/u/0/reporting/f5ce3993-2162-47d9-8156-36dc4b0bbb35/page/VbLGD';
-      } catch (error) {
-        setStatus(`Error: ${error.message}`);
+      } catch (error: any) {
+        setStatus(`Error: ${error.message || 'Unknown error occurred'}`);
       }
     };
 
