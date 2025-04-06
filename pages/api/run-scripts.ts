@@ -32,8 +32,8 @@ function updateLastRunData(script: string) {
   const lastRun = getLastRunData();
   
   const newData = {
-    date: today,
     ...lastRun,
+    date: today,
     [script]: true
   };
   
