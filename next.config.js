@@ -21,7 +21,30 @@ const nextConfig = {
       };
     }
     return config;
-  }
+  },
+  // Copy resources folder to build output
+  async rewrites() {
+    return [
+      {
+        source: '/resources/:path*',
+        destination: '/resources/:path*',
+      },
+    ];
+  },
+  // Ensure resources are included in the build
+  async headers() {
+    return [
+      {
+        source: '/resources/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig; 
