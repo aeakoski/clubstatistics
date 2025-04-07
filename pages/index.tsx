@@ -1,3 +1,4 @@
+import { log } from 'console';
 import React from 'react';
 import { useEffect, useState } from 'react';
 
@@ -10,6 +11,7 @@ export default function Home() {
         setStatus('Checking if all data components are in place for displaying proper flight data...');
         const createViewsResponse = await fetch('/api/scripts/createViews');
         const createViewsData = await createViewsResponse.json();
+        console.log(createViewsData);
         
         if (createViewsData.message.includes('already ran today')) {
           setStatus('All flight data components are already up to date. Checking flight logs...');
