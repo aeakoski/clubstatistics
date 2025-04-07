@@ -1,9 +1,38 @@
-const fs = require('fs');
-const path = require('path');
-const { BigQuery } = require('@google-cloud/bigquery');
+import fs from 'fs';
+import path from 'path';
+import { BigQuery } from '@google-cloud/bigquery';
+
+export const getGCPCredentials = () => {
+  // Check if we have a service account key file path
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    console.log(`Using credentials from file: ${process.env.GOOGLE_APPLICATION_CREDENTIALS}`);
+    return {
+      projectId: process.env.GCP_PROJECT_ID || 'osfk-it',
+      // The BigQuery client will automatically use the file specified in GOOGLE_APPLICATION_CREDENTIALS
+    };
+  }
+  
+  // for Vercel, use environment variables
+  if (process.env.GCP_PRIVATE_KEY) {
+    return {
+      credentials: {
+        client_email: process.env.GCP_SERVICE_ACCOUNT_EMAIL,
+        private_key: process.env.GCP_PRIVATE_KEY,
+      },
+      projectId: process.env.GCP_PROJECT_ID,
+    };
+  }
+  
+  // for local development, use default credentials
+  console.log('Using default credentials. Make sure you have run "gcloud auth application-default login"');
+  return {
+    projectId: process.env.GCP_PROJECT_ID || 'osfk-it',
+    // No credentials specified - will use default credentials
+  };
+};
 
 // Initialize BigQuery client
-const bigquery = new BigQuery({ projectId: 'osfk-it' });
+const bigquery = new BigQuery(getGCPCredentials());
 
 // Define view dependencies and order
 const VIEW_CREATION_ORDER = {
@@ -160,16 +189,13 @@ async function processFolder(folderPath) {
 // Main function to run the script
 async function main() {
   try {
-    // Specify the path to the "models" folder
-    const modelsFolderPath = 'models';
-    
-    // Process the folder to create or update datasets and views
-    await processFolder(modelsFolderPath);
-  } catch (err) {
-    console.error('Error:', err);
-    throw err;
+    await processFolder('models');
+    console.log('All views processed successfully');
+  } catch (error) {
+    console.error('Error processing views:', error);
+    throw error;
   }
 }
 
 // Export the main function
-module.exports = main;
+export default main;

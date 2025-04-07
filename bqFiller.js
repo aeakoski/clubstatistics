@@ -7,13 +7,35 @@ const path = require('path');
 const { not } = require('mathjs');
 const crypto = require('crypto');
 
-// Create a new BigQuery client with credentials from environment variables
-const bigquery = new BigQuery({
-  projectId: process.env.GOOGLE_CLOUD_PROJECT || 'osfk-it',
-  credentials: process.env.GOOGLE_CLOUD_CREDENTIALS ? 
-    JSON.parse(Buffer.from(process.env.GOOGLE_CLOUD_CREDENTIALS, 'base64').toString()) 
-    : undefined
-});
+// Get GCP credentials
+const getGCPCredentials = () => {
+  // Check if we have a service account key file path
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    console.log(`Using credentials from file: ${process.env.GOOGLE_APPLICATION_CREDENTIALS}`);
+    return {
+      projectId: process.env.GOOGLE_CLOUD_PROJECT || 'osfk-it',
+      // The BigQuery client will automatically use the file specified in GOOGLE_APPLICATION_CREDENTIALS
+    };
+  }
+  
+  // for Vercel, use environment variables
+  if (process.env.GOOGLE_CLOUD_CREDENTIALS) {
+    return {
+      credentials: JSON.parse(Buffer.from(process.env.GOOGLE_CLOUD_CREDENTIALS, 'base64').toString()),
+      projectId: process.env.GOOGLE_CLOUD_PROJECT || 'osfk-it',
+    };
+  }
+  
+  // for local development, use default credentials
+  console.log('Using default credentials. Make sure you have run "gcloud auth application-default login"');
+  return {
+    projectId: process.env.GOOGLE_CLOUD_PROJECT || 'osfk-it',
+    // No credentials specified - will use default credentials
+  };
+};
+
+// Create a new BigQuery client
+const bigquery = new BigQuery(getGCPCredentials());
 
 // Define your BigQuery dataset and table ID
 const datasetId = 'flight_log';
