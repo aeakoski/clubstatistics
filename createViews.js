@@ -87,11 +87,11 @@ async function createOrUpdateView(datasetId, viewId, viewSql) {
  * @returns {Object} - Map of dataset and their views with SQL content
  */
 function loadAllViews(folderPath) {
-  const datasets = fs.readdirSync(folderPath);
+  const datasets = fs.readdirSync(path.join(process.cwd(), folderPath));
   const allViews = {};
   
   for (const datasetName of datasets) {
-    const datasetPath = path.join(folderPath, datasetName);
+    const datasetPath = path.join(process.cwd(), folderPath, datasetName);
     const viewFiles = fs.readdirSync(datasetPath).filter(file => file.endsWith('.sql'));
     
     allViews[datasetName] = viewFiles.map(viewFile => ({
